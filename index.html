@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Senin için  ♥</title>
+  <meta name="description" content="Sevgiline özel, tek dosyalık mini sürpriz web sayfası." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --pink:#ff5ea7;--rose:#ff82b3;--violet:#7b6cff;--dark:#0b1021;--card:#ffffff;--glass:rgba(255,255,255,.12)
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;}
+    body{
+      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:#fff;
+      background: radial-gradient(1200px 600px at 80% 10%, rgba(255,255,255,.08), transparent),
+                  radial-gradient(800px 400px at 10% 80%, rgba(255,255,255,.06), transparent),
+                  linear-gradient(145deg,#0b1021 0%, #1d114d 40%, #2b135b 60%, #51176c 100%);
+      overflow-x:hidden;
+    }
+    .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+    .card{
+      width:min(720px,100%);
+      background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.2);
+      backdrop-filter: blur(10px);
+      border-radius:24px; padding:28px; position:relative; overflow:hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    .ribbon{position:absolute;inset:auto -50px 24px auto;rotate:-6deg;background:var(--pink);color:#fff;padding:8px 24px;border-radius:12px;box-shadow:0 10px 30px rgba(255,94,167,.5);font-weight:700}
+    h1{
+      font-family:"Great Vibes",cursive; font-size: clamp(42px, 6vw, 72px); line-height:1; margin:4px 0 8px;
+      background:linear-gradient(90deg,#ffd1e6,#fff,#ffd1e6);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 8px 40px rgba(255,255,255,.25)
+    }
+    .subtitle{opacity:.9;margin-top:4px;font-size:14px;letter-spacing:.4px}
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);padding:8px 12px;border-radius:999px;font-size:12px;margin-top:8px
+    }
+    .panel{margin-top:18px;background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.25);border-radius:16px;padding:16px}
+    .btns{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0 4px}
+    button, .ghost{
+      appearance:none;border:none;cursor:pointer;
+      border-radius:14px;padding:12px 18px;font-weight:700;font-size:14px
+    }
+    .primary{background:linear-gradient(90deg,var(--pink),var(--rose));color:#fff; box-shadow:0 10px 25px rgba(255,94,167,.45)}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
+    .msg{
+      margin:16px 0 4px; font-size:18px; line-height:1.7; color:#fff
+    }
+    .name{color:#ffd1e6;font-weight:700}
+    .footer{opacity:.7;font-size:12px;margin-top:12px}
+    .countdown{font-size:20px;font-weight:700;margin-top:12px;color:#ffd1e6;}
+
+    /* Floating hearts */
+    .heart{position:fixed; bottom:-40px; font-size:16px; opacity:.9; animation:floatUp 10s linear infinite; filter:drop-shadow(0 6px 12px rgba(255,94,167,.45))}
+    @keyframes floatUp{
+      0%{transform:translateY(0) translateX(0) scale(.8); opacity:.0}
+      10%{opacity:1}
+      100%{transform:translateY(-120vh) translateX(var(--x, 0px)) scale(1.2); opacity:0}
+    }
+
+    /* Confetti (simple) */
+    .confetti{position:fixed; inset:0; pointer-events:none}
+    .confetti span{position:absolute; width:8px; height:16px; background:var(--c,#fff); opacity:.9; top:-20px; animation:drop 3.4s cubic-bezier(.2,.7,.2,1) forwards}
+    @keyframes drop{to{transform:translateY(110vh) rotate(340deg); opacity:0}}
+
+    @media (max-width:520px){.panel{padding:12px}.btns{gap:8px} .card{padding:20px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card" role="main">
+      <div class="ribbon">Sürpriz ✨</div>
+      <h1 id="title">Senin için</h1>
+      <div class="subtitle">Bu sayfa sadece <span class="name" id="forName">sen</span> gülümsesin diye… 💖</div>
+
+      <div class="tag">💌 Aşk Notları • 1 seneye kalan süre ♥ Duygular gerçek</div>
+
+      <div class="countdown" id="countdown">Geri sayım yükleniyor...</div>
+
+      <section class="panel">
+        <p class="msg" id="message">Hazır mısın? Aşağıdaki butona tıkla, sırayla küçük notlar gelsin…</p>
+        <div class="btns">
+          <button class="primary" id="revealBtn">Not Gönder 💘</button>
+          <button class="ghost" id="copyBtn" title="Bağlantıyı kopyala">Bağlantıyı Kopyala 🔗</button>
+        </div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <canvas class="confetti" id="confetti"></canvas>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const who = (params.get('ad') || '').trim();
+    const forNameEl = document.getElementById('forName');
+    const title = document.getElementById('title');
+    if (who){
+      forNameEl.textContent = who;
+      title.textContent = who + ' için';
+      document.title = `${who} için ♥`;
+    }
+
+    const notes = [
+      "Seni düşünmek kalbime en yakışan alışkanlık.",
+      "Gülüşün, günümün favori kısmı.",
+      "Yanımda olman huzurun sözlük karşılığı.",
+      "İyi ki varsın; sensiz tüm renkler pastel kalırdı.",
+      "Bir dilek tuttum: Hep sen, hep biz…",
+      "Elini tutmak, dünyayı durdurmak gibi.",
+      "Kalbim, adını ezberden bilir."
+    ];
+
+    const msg = document.getElementById('message');
+    const btn = document.getElementById('revealBtn');
+    let i=0;
+    btn.addEventListener('click', ()=>{
+      msg.textContent = notes[i % notes.length];
+      i++;
+      burst();
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(location.href);
+        msg.textContent = 'Bağlantı kopyalandı! ♥ Paylaşmaya hazırsın.';
+        burst();
+      }catch(e){
+        alert('Kopyalama başarısız.');
+      }
+    });
+
+    const heartEmojis = ['❤','💖','💘','💝','💗'];
+    function makeHeart(){
+      const el = document.createElement('div');
+      el.className='heart';
+      el.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+      el.style.left = Math.random()*100 + 'vw';
+      el.style.setProperty('--x', (Math.random()*120-60)+'px');
+      el.style.animationDuration = (8 + Math.random()*6)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 14000);
+    }
+    setInterval(makeHeart, 800);
+
+    const conf = document.getElementById('confetti');
+    const ctx = conf.getContext('2d');
+    function size(){ conf.width = innerWidth; conf.height = innerHeight; }
+    addEventListener('resize', size); size();
+    function burst(){
+      const colors=['#ffd1e6','#ff82b3','#7b6cff','#00d1ff','#ffffff'];
+      const pieces = Array.from({length: 80}, ()=>({
+        x: innerWidth/2 + (Math.random()*120-60),
+        y: innerHeight/2 + (Math.random()*40-20),
+        dx: (Math.random()*4-2), dy: (Math.random()*-4-2),
+        w: 6, h: 10, c: colors[Math.floor(Math.random()*colors.length)],
+        rot: Math.random()*360, dr: Math.random()*8-4, life: 60+Math.random()*30
+      }));
+      let raf;
+      function tick(){
+        ctx.clearRect(0,0,conf.width,conf.height);
+        pieces.forEach(p=>{
+          p.x+=p.dx; p.y+=p.dy; p.dy+=0.12; p.rot+=p.dr; p.life-=1;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+          ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+          ctx.restore();
+        });
+        if (pieces.some(p=>p.life>0)) raf=requestAnimationFrame(tick); else cancelAnimationFrame(raf);
+      }
+      tick();
+    }
+
+    // --- Countdown Timer ---
+    const countdownEl = document.getElementById('countdown');
+    const targetDate = new Date(new Date().getFullYear()+1, 0, 1); // 1 Ocak
+    function updateCountdown(){
+      const now = new Date();
+      const diff = targetDate - now;
+      if(diff<=0){
+        countdownEl.textContent = "Mutlu Yıllar! ❤️";
+        clearInterval(timer);
+        return;
+      }
+      const days = Math.floor(diff/1000/60/60/24);
+      const hours = Math.floor((diff/1000/60/60)%24);
+      const minutes = Math.floor((diff/1000/60)%60);
+      const seconds = Math.floor((diff/1000)%60);
+      countdownEl.textContent = `${days}g ${hours}s ${minutes}dk ${seconds}sn`;
+    }
+    const timer = setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
